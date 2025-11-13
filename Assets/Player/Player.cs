@@ -9,16 +9,13 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform playerTransform;
 
     [Header("Inputs")]
-    private Vector2 moveInput;
-    private bool jumpPressed;
-    private bool jumpReleased;
-    private int facingDirection = 1;
+    [SerializeField] private Vector2 moveInput;
+    [SerializeField] private bool jumpPressed;
+    [SerializeField] private bool jumpReleased;
+    [SerializeField] private int facingDirection = 1;
 
     [Header("Movement Vars")]
-    public float maxSpeed = 20;
-    public float acceleration;
-    public float ground_drag;
-    public float air_drag;
+    public float speed = 20;
     public float jumpForce;
     public float jumpCutMultiplier = .5f;
     public float normalGravity;
@@ -30,6 +27,12 @@ public class Player : MonoBehaviour
     public float groundCheckRadius;
     public LayerMask groundLayer;
     private bool isGrounded;
+
+    [Header("Slide Settings")]
+    public float slideDuration = .6f;
+    public float slideSpeed = 12;
+    [SerializeField] private bool isSliding;
+    [SerializeField] private float slideTimer;
 
 
     private void Start()
@@ -44,26 +47,24 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Flip();
+        HandleSlide();
     }
 
     private void FixedUpdate()
     {
         ApplyGravity();
         CheckGrounded();
-        HandleMovement();
+
+        if (!isSliding)
+            HandleMovement();
+        
         HandleJump();
     }
 
     private void HandleMovement()
     {
-        if (rb.linearVelocity.x >= maxSpeed)
-        {
-            rb.linearVelocity = new Vector2(maxSpeed , rb.linearVelocity.y);
-        }
-        else
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x + acceleration, rb.linearVelocity.y);
-        }
+        rb.linearVelocity = new Vector2(moveInput.x * speed , rb.linearVelocity.y);
+        
     }
 
     private void HandleJump()
@@ -84,15 +85,21 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void ApplyDrag()
+    private void HandleSlide()
     {
-        if (isGrounded)
+        if (isSliding)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x - ground_drag, rb.linearVelocity.y);
+            slideTimer -= Time.deltaTime;
+            rb.linearVelocity = new Vector2(slideSpeed * facingDirection, rb.linearVelocity.y);
+            if (slideTimer <= 0)
+            {
+                isSliding = false;
+            }
         }
-        else
+        if(isGrounded && !isSliding)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x - air_drag, rb.linearVelocity.y);
+            isSliding = true;
+            slideTimer = slideDuration;
         }
     }
 
@@ -145,6 +152,7 @@ public class Player : MonoBehaviour
             jumpReleased = true;
         }
     }
+
 
     private void CheckGrounded()
     {
