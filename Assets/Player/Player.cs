@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector2 moveInput;
     [SerializeField] private bool jumpPressed;
     [SerializeField] private bool jumpReleased;
+    [SerializeField] private bool slidePressed;
+    [SerializeField] private bool slideReleased;
     [SerializeField] private int facingDirection = 1;
 
     [Header("Movement Vars")]
@@ -47,17 +49,14 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Flip();
-        HandleSlide();
+        //HandleSlide();
     }
 
     private void FixedUpdate()
     {
         ApplyGravity();
         CheckGrounded();
-
-        if (!isSliding)
-            HandleMovement();
-        
+        HandleMovement();        
         HandleJump();
     }
 
@@ -94,6 +93,7 @@ public class Player : MonoBehaviour
             if (slideTimer <= 0)
             {
                 isSliding = false;
+
             }
         }
         if(isGrounded && !isSliding)
@@ -150,6 +150,19 @@ public class Player : MonoBehaviour
         else
         {
             jumpReleased = true;
+        }
+    }
+
+    private void OnSlide(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            slidePressed = true;
+            slideReleased = false;
+        }
+        else
+        {
+            slideReleased = true;
         }
     }
 
