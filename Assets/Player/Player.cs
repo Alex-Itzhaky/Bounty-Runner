@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,13 +8,15 @@ public class Player : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Transform playerTransform;
+    [SerializeField] private TrailRenderer tr;
 
     [Header("Inputs")]
     [SerializeField] private Vector2 moveInput;
     [SerializeField] private bool jumpPressed;
     [SerializeField] private bool jumpReleased;
-    [SerializeField] private bool slidePressed;
-    [SerializeField] private bool slideReleased;
+    [SerializeField] private bool dashPressed;
+    //[SerializeField] private bool slidePressed;
+    //[SerializeField] private bool slideReleased;
     [SerializeField] private int facingDirection = 1;
 
     [Header("Movement Vars")]
@@ -23,6 +26,13 @@ public class Player : MonoBehaviour
     public float normalGravity;
     public float jumpGravity;
     public float fallGravity;
+
+    [Header("Dash Settings")]
+    private bool canDash = true;
+    private bool isDashing;
+    public int dashingPower = 24;
+    public float dashingTime = 0.2f;
+    public float dashCooldown = 1f;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -39,10 +49,6 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        playerInput = GetComponent<PlayerInput>();
-        playerTransform = GetComponent<Transform>();
-
         rb.gravityScale = normalGravity;
     }
 
@@ -54,10 +60,14 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isDashing)
+            return;
+
         ApplyGravity();
         CheckGrounded();
         HandleMovement();        
         HandleJump();
+        HandleDash();
     }
 
     private void HandleMovement()
@@ -83,7 +93,27 @@ public class Player : MonoBehaviour
             jumpReleased = false;
         }
     }
+    
+    private IEnumerator HandleDash()
+    {
+        if (dashPressed && canDash)
+        {
+            canDash = false;
+            isDashing = true;
+            float originalGravity = rb.gravityScale;
+            rb.gravityScale = 0f;
+            rb.linearVelocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            tr.emitting = true;
+            yield return new WaitForSeconds(dashingTime);
+            tr.emitting = false;
+            rb.gravityScale = originalGravity;
+            isDashing = false;
+            yield return new WaitForSeconds(dashCooldown);
+            canDash = true;
+        }
+    }
 
+/*
     private void HandleSlide()
     {
         if (isSliding)
@@ -102,7 +132,7 @@ public class Player : MonoBehaviour
             slideTimer = slideDuration;
         }
     }
-
+*/
     private void ApplyGravity()
     {
         if (rb.linearVelocity.y < -0.1f) //Le joueur tombe
@@ -153,6 +183,18 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnDash(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            dashPressed = true;
+        }
+        else
+        {
+            dashPressed = false;
+        }
+    }
+    /*
     private void OnSlide(InputValue value)
     {
         if (value.isPressed)
@@ -165,7 +207,7 @@ public class Player : MonoBehaviour
             slideReleased = true;
         }
     }
-
+    */
 
     private void CheckGrounded()
     {
