@@ -15,9 +15,6 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector2 moveInput;
     [SerializeField] private bool jumpPressed;
     [SerializeField] private bool jumpReleased;
-    [SerializeField] private bool dashPressed;
-    //[SerializeField] private bool slidePressed;
-    //[SerializeField] private bool slideReleased;
     [SerializeField] private int facingDirection = 1;
 
     [Header("Movement Vars")]
@@ -59,8 +56,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Flip();
-        dashCounterUpdate();
-        //HandleSlide();
+        DashCounterUpdate();
     }
 
     private void FixedUpdate()
@@ -125,26 +121,6 @@ public class Player : MonoBehaviour
         canDash = true;
     }
 
-/*
-    private void HandleSlide()
-    {
-        if (isSliding)
-        {
-            slideTimer -= Time.deltaTime;
-            rb.linearVelocity = new Vector2(slideSpeed * facingDirection, rb.linearVelocity.y);
-            if (slideTimer <= 0)
-            {
-                isSliding = false;
-
-            }
-        }
-        if(isGrounded && !isSliding)
-        {
-            isSliding = true;
-            slideTimer = slideDuration;
-        }
-    }
-*/
     private void ApplyGravity()
     {
         if (isDashing)
@@ -165,6 +141,8 @@ public class Player : MonoBehaviour
     }
     private void Flip()
     {
+        if (isDashing)
+            return;
         if (moveInput.x > 0.1f)
         {
             facingDirection = 1;
@@ -177,7 +155,7 @@ public class Player : MonoBehaviour
         playerTransform.localScale = new Vector3(facingDirection, 1, 1);
     }
 
-    private void dashCounterUpdate()
+    private void DashCounterUpdate()
     {
         if (isGrounded)
         {
@@ -209,7 +187,6 @@ public class Player : MonoBehaviour
     {
         if (!canDash || isDashing || dashCount <= 0)
             return;
-        Debug.Log("Dashing");
         StartCoroutine(HandleDash());
     }
     /*
