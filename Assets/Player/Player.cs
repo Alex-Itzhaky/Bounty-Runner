@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -33,6 +34,8 @@ public class Player : MonoBehaviour
     public int dashingPower = 24;
     public float dashingTime = 0.2f;
     public float dashCooldown = 1f;
+    private int maxDash = 1;
+    private int dashCount;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -50,28 +53,28 @@ public class Player : MonoBehaviour
     private void Start()
     {
         rb.gravityScale = normalGravity;
+        dashCount = maxDash;
     }
 
     private void Update()
     {
         Flip();
+        dashCounterUpdate();
         //HandleSlide();
     }
 
     private void FixedUpdate()
     {
-        if (isDashing)
-            return;
-
         ApplyGravity();
         CheckGrounded();
         HandleMovement();        
         HandleJump();
-        HandleDash();
     }
 
     private void HandleMovement()
     {
+        if (isDashing)
+            return;
         rb.linearVelocity = new Vector2(moveInput.x * speed , rb.linearVelocity.y);
         
     }
@@ -96,21 +99,30 @@ public class Player : MonoBehaviour
     
     private IEnumerator HandleDash()
     {
-        if (dashPressed && canDash)
-        {
-            canDash = false;
-            isDashing = true;
-            float originalGravity = rb.gravityScale;
-            rb.gravityScale = 0f;
-            rb.linearVelocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-            tr.emitting = true;
-            yield return new WaitForSeconds(dashingTime);
-            tr.emitting = false;
-            rb.gravityScale = originalGravity;
-            isDashing = false;
-            yield return new WaitForSeconds(dashCooldown);
-            canDash = true;
-        }
+        dashCount--;
+        Debug.Log(dashCount);
+        canDash = false;
+        isDashing = true;
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+
+        Vector2 dashDirection;
+        if (moveInput.sqrMagnitude > 0.01f)
+            dashDirection = moveInput.normalized;
+        else
+            dashDirection = transform.forward;
+
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(dashDirection * dashingPower, ForceMode2D.Impulse);
+        tr.emitting = true;
+        yield return new WaitForSeconds(dashingTime);
+
+        tr.emitting = false;
+        rb.gravityScale = originalGravity;
+        isDashing = false;
+        yield return new WaitForSeconds(dashCooldown);
+
+        canDash = true;
     }
 
 /*
@@ -135,6 +147,8 @@ public class Player : MonoBehaviour
 */
     private void ApplyGravity()
     {
+        if (isDashing)
+            return;
         if (rb.linearVelocity.y < -0.1f) //Le joueur tombe
         {
             rb.gravityScale = fallGravity;
@@ -163,14 +177,22 @@ public class Player : MonoBehaviour
         playerTransform.localScale = new Vector3(facingDirection, 1, 1);
     }
 
-    private void OnMove(InputValue value)
+    private void dashCounterUpdate()
+    {
+        if (isGrounded)
+        {
+            dashCount = maxDash;
+        }
+    }
+
+    void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
     }
 
     
 
-    private void OnJump(InputValue value)
+    void OnJump(InputValue value)
     {
         if (value.isPressed)
         {
@@ -183,16 +205,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnDash(InputValue value)
+    void OnDash(InputValue value)
     {
-        if (value.isPressed)
-        {
-            dashPressed = true;
-        }
-        else
-        {
-            dashPressed = false;
-        }
+        if (!canDash || isDashing || dashCount <= 0)
+            return;
+        Debug.Log("Dashing");
+        StartCoroutine(HandleDash());
     }
     /*
     private void OnSlide(InputValue value)
