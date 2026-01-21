@@ -9665,7 +9665,7 @@ MonoBehaviour:
     ScreenPosition: {x: 0, y: 0}
     DeadZone:
       Enabled: 1
-      Size: {x: 0.3, y: 0.3}
+      Size: {x: 0.2, y: 0.2}
     HardLimits:
       Enabled: 0
       Size: {x: 0.8, y: 0.8}
@@ -11764,6 +11764,14 @@ PrefabInstance:
     - target: {fileID: 3244219302662281232, guid: 79265be62f0b4ed4d9cc6d57582d8cc2, type: 3}
       propertyPath: TrackerSettings.BindingMode
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4983651768933155915, guid: 79265be62f0b4ed4d9cc6d57582d8cc2, type: 3}
+      propertyPath: m_Size.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4983651768933155915, guid: 79265be62f0b4ed4d9cc6d57582d8cc2, type: 3}
+      propertyPath: m_Size.y
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5799011430493128104, guid: 79265be62f0b4ed4d9cc6d57582d8cc2, type: 3}
       propertyPath: m_LocalPosition.x

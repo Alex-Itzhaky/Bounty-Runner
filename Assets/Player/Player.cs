@@ -238,6 +238,8 @@ public class Player : MonoBehaviour
 
     private void HandleAnimations()
     {
+        anim.SetTrigger("Dash");
+
         anim.SetBool("isIdle", Mathf.Abs(moveInput.x) < .1f && isGrounded);
         anim.SetBool("isRunning", Mathf.Abs(moveInput.x) > .1f && isGrounded);
 
@@ -245,6 +247,8 @@ public class Player : MonoBehaviour
 
         anim.SetBool("isJumping", rb.linearVelocity.y > .1f);
         anim.SetBool("isGrounded", isGrounded);
+
+
     }
 
 
