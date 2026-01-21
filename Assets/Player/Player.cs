@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private TrailRenderer tr;
+    [SerializeField] private Animator anim;
 
     [Header("Inputs")]
     [SerializeField] private Vector2 moveInput;
@@ -38,6 +39,15 @@ public class Player : MonoBehaviour
     [Header("Wall Slide Settings")]
     public float wallSlideSpeed = 5f;
 
+    [Header("Wall Jump Settings")]
+    private bool isWallJumping;
+    private float wallJumpingDirection;
+    private float wallJumpingTime = 0.2f;
+    private float wallJumpingCounter;
+    private float wallJumpingDuration = 0.4f;
+    private Vector2 wallJumpingPower = new Vector2(14f, 18f);
+
+    
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius;
@@ -46,9 +56,9 @@ public class Player : MonoBehaviour
 
     [Header("Wall Check")]
     public Transform wallCheck;
-    public Vector2 wallCheckSize = new Vector2(0.49f, 0.03f);
+    public float wallCheckRadius;
     public LayerMask wallLayer;
-    private bool isOnWall;
+    private bool isWallSliding;
 
     [Header("Slide Settings")]
     public float slideDuration = .6f;
@@ -65,17 +75,23 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        Flip();
         DashCounterUpdate();
         HandleWallSlide();
+        HandleWallJump();
+        HandleAnimations();
+        CheckGrounded();
+
+
+        if (!isWallJumping)
+            Flip();
     }
 
     private void FixedUpdate()
     {
+        if (!isWallJumping)
+            HandleMovement();
         ApplyGravity();
-        CheckGrounded();
         WallCheck();
-        HandleMovement();        
         HandleJump();
     }
 
@@ -84,7 +100,6 @@ public class Player : MonoBehaviour
         if (isDashing)
             return;
         rb.linearVelocity = new Vector2(moveInput.x * speed , rb.linearVelocity.y);
-        
     }
 
     private void HandleJump()
@@ -94,6 +109,7 @@ public class Player : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             jumpPressed = false;
             jumpReleased = false;
+            
         }
         if (jumpReleased)
         {
@@ -103,6 +119,9 @@ public class Player : MonoBehaviour
             }
             jumpReleased = false;
         }
+
+        
+
     }
     
     private IEnumerator HandleDash()
@@ -124,10 +143,9 @@ public class Player : MonoBehaviour
         float timer = 0f;
         while (timer < dashingTime)
         {
-            RaycastHit2D hit = Physics2D.Raycast(rb.position, new Vector2(dashDirection, rb.position.y), wallCheckSize.x, wallLayer);
+            RaycastHit2D hit = Physics2D.Raycast(rb.position, new Vector2(dashDirection, rb.position.y), wallCheckRadius, wallLayer);
             if (hit.collider != null)
             {
-                print("Mur touché");
                 break;
             }
             rb.linearVelocity = new Vector2(dashDirection * dashingPower, 0f);
@@ -146,17 +164,59 @@ public class Player : MonoBehaviour
 
     private void HandleWallSlide()
     {
-        if (!isGrounded && isOnWall && moveInput.x != 0)
+        if (!isGrounded && isWallSliding && moveInput.x != 0)
         {
-            isOnWall = true;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Max(rb.linearVelocity.y, -wallSlideSpeed));
         }
         else
         {
-            isOnWall = false;
+            isWallSliding = false;
         }
     }
 
+    private void HandleWallJump()
+    {
+        if (isWallSliding)
+        {
+            isWallJumping = false;
+            wallJumpingDirection = -facingDirection;
+            wallJumpingCounter = wallJumpingTime;
+
+            CancelInvoke(nameof(StopWallJumping));
+        }
+        else if(!isGrounded)
+        {
+            wallJumpingCounter -= Time.deltaTime;
+        }
+        else
+        {
+            //Debug.Log("else atteint");
+            wallJumpingCounter = 0f;
+        }
+
+        if (jumpPressed && wallJumpingCounter > 0)
+        {
+            isWallJumping = true;
+            jumpPressed = false;
+            rb.linearVelocity = new Vector2(wallJumpingDirection * wallJumpingPower.x, wallJumpingPower.y);
+            wallJumpingCounter = 0f;
+
+            if (transform.localScale.x != wallJumpingDirection)
+            {
+                Vector3 localScale = transform.localScale;
+                localScale.x *= -1f;
+                transform.localScale = localScale;
+            }
+
+            Invoke(nameof(StopWallJumping), wallJumpingDuration);
+        }
+    }
+
+    private void StopWallJumping()
+    {
+        isWallJumping = false;
+    }
+    
     private void ApplyGravity()
     {
         if (isDashing)
@@ -175,6 +235,19 @@ public class Player : MonoBehaviour
         }
 
     }
+
+    private void HandleAnimations()
+    {
+        anim.SetBool("isIdle", Mathf.Abs(moveInput.x) < .1f && isGrounded);
+        anim.SetBool("isRunning", Mathf.Abs(moveInput.x) > .1f && isGrounded);
+
+        anim.SetFloat("yVelocity", rb.linearVelocity.y);
+
+        anim.SetBool("isJumping", rb.linearVelocity.y > .1f);
+        anim.SetBool("isGrounded", isGrounded);
+    }
+
+
     private void Flip()
     {
         if (isDashing)
@@ -199,9 +272,18 @@ public class Player : MonoBehaviour
         }
     }
 
+
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+        if (moveInput.x > 0.1f)
+        {
+            moveInput.x = 1f;
+        }
+        else if (moveInput.x < -0.1f)
+        {
+            moveInput.x = -1f;
+        }
     }
 
     
@@ -215,8 +297,8 @@ public class Player : MonoBehaviour
         }
         else
         {
-            jumpReleased = true;
-        }
+            jumpReleased = true;        }
+        
     }
 
     void OnDash(InputValue value)
@@ -247,13 +329,12 @@ public class Player : MonoBehaviour
 
     private void WallCheck()
     {
-        isOnWall = Physics2D.OverlapBox(wallCheck.position, wallCheckSize, wallLayer);
-        Debug.Log("WallCheck = " + isOnWall);
+        isWallSliding = Physics2D.OverlapCircle(wallCheck.position, wallCheckRadius, wallLayer);
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(wallCheck.position, wallCheckSize);
+        Gizmos.DrawWireSphere(wallCheck.position, wallCheckRadius);
     }
 }
