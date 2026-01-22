@@ -19,7 +19,7 @@ public class ParallaxManager : MonoBehaviour
         lastCameraPosition = camTransform.position;
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         Vector3 cameraDelta = camTransform.position - lastCameraPosition;
 

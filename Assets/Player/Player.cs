@@ -238,7 +238,13 @@ public class Player : MonoBehaviour
 
     private void HandleAnimations()
     {
-        anim.SetTrigger("Dash");
+        if (isDashing)
+            anim.SetTrigger("Dash");
+
+        if (isWallSliding && !isGrounded && Mathf.Abs(moveInput.x) > 0.1f && rb.linearVelocity.y < -.1f)
+            anim.SetTrigger("Wall Slide");
+
+
 
         anim.SetBool("isIdle", Mathf.Abs(moveInput.x) < .1f && isGrounded);
         anim.SetBool("isRunning", Mathf.Abs(moveInput.x) > .1f && isGrounded);
@@ -247,8 +253,6 @@ public class Player : MonoBehaviour
 
         anim.SetBool("isJumping", rb.linearVelocity.y > .1f);
         anim.SetBool("isGrounded", isGrounded);
-
-
     }
 
 

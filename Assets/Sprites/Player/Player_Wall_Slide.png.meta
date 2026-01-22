@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2ad82b6209c5dad46b988daa6d08bc5a
+guid: 01cda9c2a150acf43b3bf447a39861f6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9157388493419682831
-    second: Parralax_Background_0
+      213: -2191859427959779130
+    second: Player_Wall_Slide_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Parralax_Background_0
+      name: Player_Wall_Slide_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 21
         y: 0
-        width: 480
-        height: 270
+        width: 26
+        height: 63
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1f36873eeab6ae080800000000000000
-      internalID: -9157388493419682831
+      spriteID: 6c0ddd69673f491e0800000000000000
+      internalID: -2191859427959779130
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Parralax_Background_0: -9157388493419682831
+      Player_Wall_Slide_0: -2191859427959779130
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
