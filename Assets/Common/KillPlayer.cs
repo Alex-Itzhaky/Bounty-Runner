@@ -1,4 +1,7 @@
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class KillPlayer : MonoBehaviour
 {
@@ -21,7 +24,8 @@ public class KillPlayer : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player")) 
         {
-            player.transform.position = respawnPoint.position;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            //player.transform.position = respawnPoint.position;
         }
     }
 }

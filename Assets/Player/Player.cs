@@ -241,7 +241,7 @@ public class Player : MonoBehaviour
         if (isDashing)
             anim.SetTrigger("Dash");
 
-        if (isWallSliding && !isGrounded && Mathf.Abs(moveInput.x) > 0.1f && rb.linearVelocity.y < -.1f)
+        if (isWallSliding && !isGrounded && Mathf.Abs(moveInput.x) > 0.1f)
             anim.SetTrigger("Wall Slide");
 
 

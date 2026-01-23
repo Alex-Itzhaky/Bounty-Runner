@@ -6,6 +6,7 @@ public class Timer : MonoBehaviour
 {
     private bool timerActive;
     private float currentTime;
+    private bool timerWasStarted = false;
     [SerializeField] private TMP_Text text;
     [SerializeField] private Rigidbody2D rb;
 
@@ -26,8 +27,9 @@ public class Timer : MonoBehaviour
         {
             currentTime += Time.deltaTime;
         }
-        else if (!timerActive && Mathf.Abs(rb.linearVelocity.x) > .1f)
+        else if (!timerActive && Mathf.Abs(rb.linearVelocity.x) > .1f && !timerWasStarted)
         {
+            timerWasStarted = true;
             StartTimer();
         }
 

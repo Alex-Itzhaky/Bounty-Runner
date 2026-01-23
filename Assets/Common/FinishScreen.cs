@@ -8,10 +8,13 @@ public class FinishScreen : MonoBehaviour
     [SerializeField] private UnityEvent _collisionEnter;
     [SerializeField] private UnityEvent _collisionExit;
 
+    public GameManagerScript gameManager;
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.GetComponent(colliderScript))
         {
+            gameManager.GameOver();
             _collisionEnter?.Invoke();
         }
     }
