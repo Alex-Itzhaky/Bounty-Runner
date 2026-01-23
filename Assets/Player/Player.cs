@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] public PlayerInput playerInput;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private TrailRenderer tr;
     [SerializeField] private Animator anim;
