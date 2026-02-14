@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     private int maxDash = 1;
     private int dashCount;
     private bool canDash = true;
-    private bool isDashing;
+    public bool isDashing;
 
     [Header("Wall Slide Settings")]
     public float wallSlideSpeed = 5f;
@@ -210,6 +210,12 @@ public class Player : MonoBehaviour
 
             Invoke(nameof(StopWallJumping), wallJumpingDuration);
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (isDashing && collision.gameObject.tag == "Enemy")
+            Destroy(collision.gameObject);
     }
 
     private void StopWallJumping()
