@@ -10277,7 +10277,7 @@ GameObject:
   - component: {fileID: 301040456}
   m_Layer: 0
   m_Name: Ennemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10371,11 +10371,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 301040452}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2823e9e1be783834fb1c640068f8d12e, type: 3}
+  m_Script: {fileID: 11500000, guid: a529e954d2bcb7e40a38a8f86c78d5c5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KillPlayer
-  player: {fileID: 140594249}
-  respawnPoint: {fileID: 2122364624}
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  player: {fileID: 766746933}
 --- !u!1 &382140786
 GameObject:
   m_ObjectHideFlags: 0
@@ -12318,7 +12317,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   player: {fileID: 140594249}
-  respawnPoint: {fileID: 2122364624}
 --- !u!61 &612183620
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -13119,6 +13117,17 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 7394018966228868817, guid: 79265be62f0b4ed4d9cc6d57582d8cc2, type: 3}
   m_PrefabInstance: {fileID: 3841398286213134819}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &766746933 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2804930056126176769, guid: 79265be62f0b4ed4d9cc6d57582d8cc2, type: 3}
+  m_PrefabInstance: {fileID: 3841398286213134819}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140594249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 599dd6b00cb104a41a0ca0f36a8d6145, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
 --- !u!1 &784594533
 GameObject:
   m_ObjectHideFlags: 0
@@ -14177,8 +14186,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 67.29
-  m_fontSizeBase: 67.29
+  m_fontSize: 48.7
+  m_fontSizeBase: 48.7
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
