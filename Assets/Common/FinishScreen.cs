@@ -7,6 +7,8 @@ public class FinishScreen : MonoBehaviour
     [SerializeField] private string colliderScript;
     [SerializeField] private UnityEvent _collisionEnter;
     [SerializeField] private UnityEvent _collisionExit;
+    public Player player;
+    public Enemy enemy;
 
     public GameManagerScript gameManager;
 
