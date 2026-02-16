@@ -8,7 +8,6 @@ public class FinishScreen : MonoBehaviour
     [SerializeField] private UnityEvent _collisionEnter;
     [SerializeField] private UnityEvent _collisionExit;
     public Player player;
-    public Enemy enemy;
 
     public GameManagerScript gameManager;
 
@@ -17,6 +16,7 @@ public class FinishScreen : MonoBehaviour
         if(collision.gameObject.GetComponent(colliderScript))
         {
             gameManager.GameOver();
+            gameManager.pauseManager.Pause();
             _collisionEnter?.Invoke();
         }
     }

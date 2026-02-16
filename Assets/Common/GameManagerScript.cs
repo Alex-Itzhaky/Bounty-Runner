@@ -9,6 +9,7 @@ public class GameManagerScript : MonoBehaviour
     private string timerText;
     private string titleText;
     public GameObject Title;
+    public PauseManager pauseManager;
 
     void Start()
     {
@@ -44,13 +45,24 @@ public class GameManagerScript : MonoBehaviour
         gameOverUI.SetActive(true);
     }
 
+    public void NextLevel()
+    {
+        Debug.Log("Next Level");
+        SceneManager.LoadScene("Level1Scene");
+        pauseManager.Unpause();
+    }
+
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        pauseManager.Unpause();
     }
 
     public void Quit()
     {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
         Application.Quit();
     }
 }

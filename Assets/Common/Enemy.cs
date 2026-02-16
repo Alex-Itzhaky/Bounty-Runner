@@ -9,11 +9,29 @@ public class Enemy : MonoBehaviour
     public AIDestinationSetter destinationSetter;
     public SpriteRenderer sprite;
 
+    private bool enemyIsEnabled = false;
+
+    private void Awake()
+    {
+        destinationSetter.enabled = false;
+    }
 
     private void Start()
     {
         destinationSetter.enabled = false;
+        StartCoroutine(InitialzeEnemy());
     }
+
+    protected void OnEnable()
+    {
+        EnemyManager.instance.Register(destinationSetter);
+    }
+
+    protected void OnDestroy()
+    {
+        EnemyManager.instance.Unregister(destinationSetter);
+    }
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -25,13 +43,25 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if(sprite.isVisible)
+        if(!sprite.isVisible || !enemyIsEnabled)
+        {
+            destinationSetter.enabled = false;
+        } 
+        else if (sprite.isVisible && enemyIsEnabled)
         {
             destinationSetter.enabled = true;
-        } else
+        }
+        else
         {
             StartCoroutine(CancelChase());
         }
+    }
+
+    private IEnumerator InitialzeEnemy()
+    {
+        yield return new WaitForSeconds(1.0f);
+        destinationSetter.enabled = true;
+        enemyIsEnabled = true;
     }
 
     private IEnumerator CancelChase()

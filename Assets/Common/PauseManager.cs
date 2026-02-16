@@ -5,27 +5,26 @@ public class PauseManager : MonoBehaviour
     public bool gameIsPaused = true;
 
     public Player player;
-    public Enemy enemy;
 
     void Start()
     {
         Time.timeScale = 1;
         player.enabled = true;
-        enemy.enabled = true;
     }
 
-    private void Pause()
+    public void Pause()
     {
+        Debug.Log("Pause");
         Time.timeScale = 0;
         player.enabled = false;
-        enemy.enabled = false;
+        EnemyManager.instance.DisableAllEnemies();
     }
 
-    private void Unpause()
+    public void Unpause()
     {
         Time.timeScale = 1;
         player.enabled = true;
-        enemy.enabled = true;
+        EnemyManager.instance.EnableAllEnemies();
     }
 
     

@@ -6,8 +6,6 @@ public class CollisionDetector : MonoBehaviour
 {
     [SerializeField] private string _colliderScript;
 
-    [SerializeField] private SpriteRenderer gg;
-
     [SerializeField] private UnityEvent _collisionEnter;
 
     [SerializeField] private UnityEvent _collisionExit;
@@ -18,7 +16,6 @@ public class CollisionDetector : MonoBehaviour
         if(col.gameObject.GetComponent(_colliderScript))
         {
             _collisionEnter?.Invoke();
-            //gg.enabled = true;
         }
     }
 
